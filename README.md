@@ -2,12 +2,17 @@
 
 
 Kelompok C2
+
+
 Clairine (103102400080)
 
 Shindy (103102400080)
 
 MOkhammad Bahauddin(103102400080)
 
+
+
+![Screenshot](assets/images/screenshot pacto.png)
 
 
 
