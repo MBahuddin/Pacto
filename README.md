@@ -4,11 +4,11 @@
 Kelompok C2
 
 
-Clairine (103102400080)
+Clairine Anargya Athallah (1031024000310)
 
-Shindy (103102400080)
+Shindy Yusnidha Azzahra (103102400042)
 
-MOkhammad Bahauddin(103102400080)
+MOkhammad Bahauddin (103102400080)
 
 
 
