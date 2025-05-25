@@ -12,7 +12,7 @@ MOkhammad Bahauddin(103102400080)
 
 
 
-![Screenshot](assets/images/screenshot pacto.png)
+![Screenshot](assets/images/screenshot_pacto.png)
 
 
 
