@@ -4,7 +4,7 @@
 Kelompok C2
 
 
-Clairine Anargya Athallah (1031024000310)
+Clairine Anargya Athallah (103102400031)
 
 Shindy Yusnidha Azzahra (103102400042)
 
