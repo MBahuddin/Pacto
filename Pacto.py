@@ -3,15 +3,10 @@ from tkinter import messagebox, filedialog
 from PIL import Image, ImageDraw
 import datetime
 import os
-import sys
 from functools import partial
 
-def resource_path(relative_path):
-    try:
-        base_path = sys._MEIPASS2
-    except Exception:
-        base_path= os.path.abspath(".")
-    return os.path.join(base_path, relative_path)
+
+
 
 
 
@@ -207,8 +202,7 @@ class BerandaPage(ctk.CTkFrame):
 
         ctk.CTkLabel(container, text="Welcome to", font=ctk.CTkFont(family="Poppins", size=20)).pack(pady=(30, 10))
 
-        logo = ctk.CTkImage(light_image=Image.open(resource_path("assets\\images\\logo pacto.png")).resize((250, 180)), size=(250, 180))
-
+        logo = ctk.CTkImage(light_image=Image.open("assets/images/logo pacto.png"), size=(250, 180))
         ctk.CTkLabel(container, image=logo, text="").pack(pady=(0, 20))
 
         ctk.CTkButton(container,fg_color="#FFBC53",hover_color="#FF7125", text="Sign In", width=200,height=40, command=lambda: master.show_frame("signin")).pack(pady=10)
@@ -225,7 +219,7 @@ class SignInPage(ctk.CTkFrame):
         container.pack_propagate(False)
 
         # Gambar kepala
-        user_icon = ctk.CTkImage(light_image=Image.open(resource_path("assets\\login\\user_icon.png")).resize((150, 140)), size=(150, 140))
+        user_icon = ctk.CTkImage(light_image=Image.open("assets/login/user_icon.png"), size=(150, 140))
         ctk.CTkLabel(container, image=user_icon, text="").pack(pady=(25, 10))
 
         
@@ -257,8 +251,7 @@ class SignUpPage(ctk.CTkFrame):
         container.pack_propagate(False)
 
         # Gambar kepala user
-        user_icon = ctk.CTkImage(light_image=Image.open(resource_path("assets\\login\\user_icon.png")).resize((150, 140)), size=(150, 140))
-
+        user_icon = ctk.CTkImage(light_image=Image.open("assets/login/user_icon.png"), size=(150, 140))
         ctk.CTkLabel(container, image=user_icon, text="").pack(pady=(25, 10))
 
         ctk.CTkLabel(container, text="Sign Up", font=ctk.CTkFont(family="Times New Roman", size=24)).pack(pady=5)
@@ -284,112 +277,86 @@ class SignUpPage(ctk.CTkFrame):
 class ProductPage(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master, fg_color="white")
-        self.configure(fg_color="white")
         self.master = master
         self.sort_ascending = True
-
 
         self.sidebar = Sidebar(self)
         self.sidebar.grid(row=0, column=0, sticky="ns")
 
-        self.content = ctk.CTkFrame(self,fg_color="white")
+        self.content = ctk.CTkFrame(self, fg_color="white")
         self.content.grid(row=0, column=1, sticky="nsew")
-
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
         self.content.grid_columnconfigure(0, weight=1)
-        self.content.grid_rowconfigure(4, weight=1)
+        self.content.grid_rowconfigure(1, weight=1)
 
-        # === HEADER ===
-        self.header = ctk.CTkFrame(self.content,fg_color="white")
+        # Scrollable area containing everything
+        self.scrollable_body = ctk.CTkScrollableFrame(self.content, fg_color="white")
+        self.scrollable_body.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
+        self.scrollable_body.grid_columnconfigure(0, weight=1)
+
+        # HEADER
+        self.header = ctk.CTkFrame(self.content, fg_color="white")
         self.header.grid(row=0, column=0, sticky="ew", padx=10, pady=(10, 5))
         self.header.grid_columnconfigure(0, weight=1)
 
         self.search_entry = ctk.CTkEntry(
-            self.header,
-            placeholder_text="🔍Search item .....",
-            width=1600,
-            height=30,
-            corner_radius=10
-            ,
-            fg_color="white",
-            text_color="black",
-            border_color="#CCCCCC",
-            border_width=2,
-    )
+            self.header, placeholder_text="🔍Search item .....", width=1600,
+            height=30, corner_radius=10, fg_color="white", text_color="black",
+            border_color="#CCCCCC", border_width=2
+        )
         self.search_entry.grid(row=0, column=0, sticky="w")
         self.search_entry.bind("<Return>", self.on_search_enter)
-        self.sort_button = ctk.CTkButton(
-            self.header,
-            text="↕️sort",
-            width=30,
-            height=40,
-            corner_radius=10,
-            fg_color="#00A86B",
-            text_color="white",
 
-            hover_color="#DDDDDD",
-            font=ctk.CTkFont(size=14, weight="bold"),
-            command=self.toggle_price_sort
+        self.sort_button = ctk.CTkButton(
+            self.header, text="↕️sort", width=30, height=40, corner_radius=10,
+            fg_color="#00A86B", text_color="white", hover_color="#DDDDDD",
+            font=ctk.CTkFont(size=14, weight="bold"), command=self.toggle_price_sort
         )
         self.sort_button.grid(row=0, column=1, padx=(10, 0), sticky="e")
 
+        self.basket_btn = ctk.CTkButton(
+            self.header, text=f"🛒 ({len(self.master.cart)})", text_color="white",
+            width=40, height=40, corner_radius=10, fg_color="#FFBC53",
+            hover_color="#FF7125", font=ctk.CTkFont(size=14, weight="bold"),
+            command=self.show_cart
+        )
+        self.basket_btn.grid(row=0, column=2, sticky="e", padx=(5, 0))
+
         self.account_btn = ctk.CTkButton(
-            self.header,
-            text="👤",
-            width=20,
-            height=20,
-            command=lambda: self.master.show_frame("settings"),
-            corner_radius=40,
-            text_color="black",
-            fg_color="white",
-            hover_color="#DDDDDD",
+            self.header, text="👤", width=20, height=20, command=lambda: self.master.show_frame("settings"),
+            corner_radius=40, text_color="black", fg_color="white", hover_color="#DDDDDD",
             font=ctk.CTkFont(size=20, weight="bold")
         )
         self.account_btn.grid(row=0, column=3, sticky="e", padx=(5, 0))
 
-        self.basket_btn = ctk.CTkButton(
-            self.header,
-            text=f"🛒 ({len(self.master.cart)})",
-            text_color="white",
-            width=40,
-            height=40,
-            command=self.show_cart,
-            corner_radius=10,
-            fg_color="#FFBC53",
-            hover_color="#FF7125",
-            font=ctk.CTkFont(size=14, weight="bold")
-            
-        )
-        self.basket_btn.grid(row=0, column=2, sticky="e", padx=(5, 0))
-
-        # === BANNER SLIDER ===
+        # Banner Frame
         self.banner_index = 0
-        self.banner_colors = [(255, 200, 200), (200, 255, 200), (200, 200, 255)]
         self.banner_ctk_images = []
+        self.banner_colors = [(255, 200, 200), (200, 255, 200), (200, 200, 255)]
         self.update_banner_images(self.winfo_width())
+        self.after(1000, self.auto_rotate_banner)
 
-        self.coupon_codes = ["HEMAT10", "DISKON20", "HEMAT30"]
-        self.after(1000, self.auto_rotate_banner)  # wait 1 second before starting
-
-
-
-        self.banner_frame = ctk.CTkFrame(self.content, fg_color="transparent")
-        self.banner_frame.grid(row=1, column=0, padx=0, pady=(5, 5), sticky="nsew")
+        self.banner_frame = ctk.CTkFrame(self.scrollable_body, fg_color="transparent")
+        self.banner_frame.grid(row=0, column=0, padx=0, pady=(5, 5), sticky="nsew")
         self.banner_frame.grid_columnconfigure(0, weight=1)
-        self.content.grid_rowconfigure(1, weight=0)
         self.banner_label = ctk.CTkLabel(self.banner_frame, image=self.banner_ctk_images[0], text="")
-        self.banner_label.place(relwidth=1, relheight=1)  # covers entire banner frame
-        
-        # === CATEGORY ===
-        self.allcat_label = ctk.CTkLabel(self.content, text="All Categories", font=ctk.CTkFont(size=22, weight="bold"))
-        self.allcat_label.grid(row=2, column=0, sticky="w", padx=20, pady=(10, 0))
+        self.banner_label.place(relwidth=1, relheight=1)
 
-        self.category_frame = ctk.CTkFrame(self.content, fg_color="white")
-        self.category_frame.grid(row=3, column=0, pady=(10, 10))
+        # Category Section
+        self.allcat_label = ctk.CTkLabel(self.scrollable_body, text="All Categories", font=ctk.CTkFont(size=22, weight="bold"))
+        self.allcat_label.grid(row=1, column=0, sticky="w", padx=20, pady=(10, 0))
+
+        self.category_frame = ctk.CTkFrame(self.scrollable_body, fg_color="white")
+        self.category_frame.grid(row=2, column=0, pady=(10, 10))
         self.category_frame.grid_columnconfigure(0, weight=1)
-        self.update_account_button_image()
 
+        self.popular_label = ctk.CTkLabel(self.scrollable_body, text="Products", font=ctk.CTkFont(size=22, weight="bold"))
+        self.popular_label.grid(row=3, column=0, sticky="w", padx=20, pady=(0, 5))
+
+        self.main_body = ctk.CTkFrame(self.scrollable_body, fg_color="white")
+        self.main_body.grid(row=4, column=0, sticky="nsew", padx=10, pady=10)
+        self.main_body.grid_columnconfigure(0, weight=1)
 
         self.kategori_produk = {
             "Semua": [
@@ -535,19 +502,8 @@ class ProductPage(ctk.CTkFrame):
             btn.pack(side="left", padx=8, pady=5)
         # === PRODUCT GRID ==
       
-        self.popular_label = ctk.CTkLabel(self.content, text="Products", font=ctk.CTkFont(size=22, weight="bold"))
-        self.popular_label.grid(row=5, column=0, sticky="w", padx=20, pady=(0, 5))
-
-
-        self.main_body = ctk.CTkFrame(self.content, fg_color="white")
-        self.main_body.grid(row=6, column=0, sticky="nsew", padx=10, pady=10)
-        self.main_body.grid_columnconfigure(0, weight=1)
-        self.main_body.grid_rowconfigure(0, weight=1)
-
-        self.grid_scroll = ctk.CTkScrollableFrame(self.main_body, width= 950, height=600,fg_color="white")
-        self.grid_scroll.grid(row=0, column=0, sticky="nsew")
-        self.grid_scroll.configure(width=900, height= 600)
-
+       
+        self.update_account_button_image()
         self.populate_products(self.kategori_produk[self.active_category])
         self.bind("<Configure>", self.on_resize)
 
@@ -570,9 +526,9 @@ class ProductPage(ctk.CTkFrame):
 
     def update_banner_images(self, new_width):
         banner_paths = [
-            resource_path("assets\\banners\\banner1.png"),
-            resource_path("assets\\banners\\banner2.png"),
-            resource_path("assets\\banners\\banner3.png")
+            "assets/banners/banner1.png",
+            "assets/banners/banner2.png",
+            "assets/banners/banner3.png"
         ]
         new_width = max(self.content.winfo_width(), 1760)
         new_height = int(190)
@@ -663,15 +619,15 @@ class ProductPage(ctk.CTkFrame):
 
 
     def populate_products(self, produk_list):
-        for widget in self.grid_scroll.winfo_children():
+        for widget in self.main_body.winfo_children():
             widget.destroy()
 
+        wrapper = ctk.CTkFrame(self.main_body, fg_color="white")
+        wrapper.pack(padx=10, pady=10)
+        
         max_columns = 5
         card_width = 180
         card_height = 220
-
-        wrapper = ctk.CTkFrame(self.grid_scroll, fg_color="white")
-        wrapper.pack(padx=10, pady=10)
 
         price_map = {
             "Wortel 1.5 Kg": 20000,
